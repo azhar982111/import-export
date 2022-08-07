@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+<link rel="stylesheet" href="./navbar.css">
+
+<style>
+    #dropdown {
+        border: 1px solid black;
+        width: 167px;
+        margin-top: -2px;
+    }
+
+    #searchbar {
+        margin-top: 50px;
+    }
+</style>
+
+<body>
+
+
+
+    <div id="container"></div>
+
+    <div id="searchbar">
+        <input type="text" id="search" oninput="debounce(appendData,2000)">
+
+    </div>
+
+    <div id="dropdown"></div>
+
+
+</body>
+
+<script type="module">
+    import Navbar from './navbar.js'
+    document.getElementById("container").innerHTML = Navbar();
+</script>
+
+<script>
+    const getData = async (url) => {
+        try {
+            let res = await fetch(url)
+            let data = await res.json()
+            return data
+
+        } catch (error) {
+        console.log(error)
+
+    }
+    }
+
+    let appendData = async () => {
+        try {
+            document.getElementById("dropdown").innerHTML = ""
+
+            let name = document.getElementById("search").value
+
+            if (name !== "") {
+                let url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
+
+                let receivedData = await getData(url)
+                console.log(receivedData)
+
+                receivedData.meals.forEach(element => {
+                    let divsion = document.createElement("div")
+
+                    let text = document.createElement("p")
+                    text.textContent = element.strMeal
+
+                    // console.log(element.strMeal)
+
+                    divsion.append(text)
+                    document.getElementById("dropdown").append(divsion)
+
+                });
+
+            }
+
+
+
+
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    let timerId;
+
+    function debounce(func, delay) {
+        if (timerId) {
+            clearTimeout(timerId)
+        }
+
+        timerId = setTimeout(function () {
+            func();
+        }, delay);
+    }
+
+
+</script>
+
+</html>
